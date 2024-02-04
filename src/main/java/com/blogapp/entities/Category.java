@@ -6,8 +6,10 @@ import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
 
+import java.util.List;
+
 @Entity
-@Table(name = "categories")
+@Table(name = "category")
 @NoArgsConstructor
 @AllArgsConstructor
 @Getter
@@ -23,4 +25,7 @@ public class Category {
 
     @Column(name = "description")
     private String categoryDescription;
+
+    @ManyToMany(mappedBy = "categoryList", cascade = CascadeType.ALL, fetch = FetchType.LAZY)
+    private List<Post> posts;
 }
