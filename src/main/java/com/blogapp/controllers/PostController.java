@@ -1,5 +1,6 @@
 package com.blogapp.controllers;
 
+import com.blogapp.payloads.ApiResponse;
 import com.blogapp.payloads.PostDto;
 import com.blogapp.services.PostService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,5 +34,29 @@ public class PostController {
     public ResponseEntity<?> getAllPostsFromUserId(@PathVariable int userId) {
         List<PostDto> postDtos = postService.getPostsByUser(userId);
         return ResponseEntity.ok(postDtos);
+    }
+
+    @GetMapping("/posts/{postId}")
+    public ResponseEntity<?> getPostById(@PathVariable int postId) {
+        PostDto postDto = postService.getPostById(postId);
+        return ResponseEntity.ok(postDto);
+    }
+
+    @GetMapping("/posts")
+    public ResponseEntity<?> getAllPosts() {
+        List<PostDto> postDtos = postService.getAllPosts();
+        return ResponseEntity.ok(postDtos);
+    }
+
+    @DeleteMapping("/posts/{postId}")
+    public ResponseEntity<?> deletePostById(@PathVariable int postId) {
+        postService.deletePost(postId);
+        return new ResponseEntity<>(new ApiResponse("Post Deleted Successfully", true), HttpStatus.OK);
+    }
+
+    @PutMapping("/posts/{postId}")
+    public ResponseEntity<?> updatePost(@RequestBody PostDto postDto, @PathVariable int postId) {
+        PostDto updatedPost = postService.updatePost(postDto, postId);
+        return ResponseEntity.ok(updatedPost);
     }
 }
