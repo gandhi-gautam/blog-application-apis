@@ -1,12 +1,17 @@
 package com.blogapp.entities;
 
 import jakarta.persistence.*;
+import lombok.Getter;
+import lombok.NoArgsConstructor;
+import lombok.Setter;
 
 import java.util.Date;
-import java.util.List;
 
 @Entity
 @Table(name = "post")
+@Getter
+@Setter
+@NoArgsConstructor
 public class Post {
 
     @Id
@@ -30,9 +35,7 @@ public class Post {
     @JoinColumn(name = "user_id")
     private User user;
 
-    @ManyToMany
-    @JoinTable(name = "category_post",
-            joinColumns = @JoinColumn(name = "category_id"),
-            inverseJoinColumns = @JoinColumn(name = "post_id"))
-    private List<Category> categoryList;
+    @ManyToOne
+    @JoinColumn(name = "category_id")
+    private Category category;
 }
