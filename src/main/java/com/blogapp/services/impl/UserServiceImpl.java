@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -79,8 +80,8 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public PageResponse getAllUsers(int pageNumber, int pageSize) {
-        Pageable pageable = getUserPageableRequest(pageNumber, pageSize);
+    public PageResponse getAllUsers(int pageNumber, int pageSize, String fieldName, String sortDir) {
+        Pageable pageable = getUserPageableRequest(pageNumber, pageSize, fieldName, sortDir);
         Page<User> users = userRepo.findAll(pageable);
         List<UserDto> userDtos = users.getContent().stream().map(user -> userToDto(user)).collect(Collectors.toList());
         PageResponse response = mapDataToPageResponse(users, userDtos);
@@ -115,8 +116,14 @@ public class UserServiceImpl implements UserService {
         return userDto;
     }
 
-    private Pageable getUserPageableRequest(int pageNumber, int pageSize) {
-        return PageRequest.of(pageNumber, pageSize);
+    private Pageable getUserPageableRequest(int pageNumber, int pageSize, String fieldName, String sortDir) {
+        Sort sort = null;
+        if (sortDir.equalsIgnoreCase("asc")) {
+            sort = Sort.by(fieldName).ascending();
+        } else {
+            sort = Sort.by(fieldName).descending();
+        }
+        return PageRequest.of(pageNumber, pageSize, sort);
     }
 
     private PageResponse mapDataToPageResponse(Page<User> users, List<UserDto> userDtos) {

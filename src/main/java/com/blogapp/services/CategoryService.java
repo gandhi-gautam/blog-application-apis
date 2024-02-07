@@ -3,8 +3,6 @@ package com.blogapp.services;
 import com.blogapp.payloads.CategoryDto;
 import com.blogapp.payloads.PageResponse;
 
-import java.util.List;
-
 public interface CategoryService {
     CategoryDto createNewCategory(CategoryDto categoryDto);
 
@@ -14,5 +12,5 @@ public interface CategoryService {
 
     void deleteCategoryById(int categoryId);
 
-    PageResponse getAllCategories(int pageNumber, int pageSize);
+    PageResponse getAllCategories(int pageNumber, int pageSize, String fieldName, String sortDir);
 }

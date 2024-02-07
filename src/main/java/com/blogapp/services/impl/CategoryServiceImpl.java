@@ -11,6 +11,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -56,8 +57,8 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public PageResponse getAllCategories(int pageNumber, int pageSize) {
-        Pageable pageable = createPageableRequest(pageNumber, pageSize);
+    public PageResponse getAllCategories(int pageNumber, int pageSize, String fieldName, String sortDir) {
+        Pageable pageable = createPageableRequest(pageNumber, pageSize, fieldName, sortDir);
         Page<Category> categories = categoryRepo.findAll(pageable);
         List<CategoryDto> categoryDtos = categories.getContent().stream().map(category -> categoryToDto(category)).
                 collect(Collectors.toList());
@@ -73,8 +74,15 @@ public class CategoryServiceImpl implements CategoryService {
         return modelMapper.map(category, CategoryDto.class);
     }
 
-    private Pageable createPageableRequest(int pageNumber, int pageSize) {
-        return PageRequest.of(pageNumber, pageSize);
+    private Pageable createPageableRequest(int pageNumber, int pageSize, String fieldName, String sortDir) {
+        Sort sort = null;
+        if (sortDir.equalsIgnoreCase("asc")) {
+            sort = Sort.by(fieldName).ascending();
+        } else {
+            sort = Sort.by(fieldName).descending();
+        }
+        return PageRequest.of(pageNumber, pageSize, sort);
+
     }
 
     private PageResponse mapPageWithData(Page<Category> categories, List<CategoryDto> categoryDtos) {

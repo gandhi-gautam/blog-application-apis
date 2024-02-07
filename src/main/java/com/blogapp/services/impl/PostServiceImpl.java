@@ -4,8 +4,8 @@ import com.blogapp.entities.Category;
 import com.blogapp.entities.Post;
 import com.blogapp.entities.User;
 import com.blogapp.exceptions.ResourceNotFoundException;
-import com.blogapp.payloads.PostDto;
 import com.blogapp.payloads.PageResponse;
+import com.blogapp.payloads.PostDto;
 import com.blogapp.repositories.CategoryRepo;
 import com.blogapp.repositories.PostRepo;
 import com.blogapp.repositories.UserRepo;
@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.data.domain.Page;
 import org.springframework.data.domain.PageRequest;
 import org.springframework.data.domain.Pageable;
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 
 import java.util.Date;
@@ -72,8 +73,8 @@ public class PostServiceImpl implements PostService {
     }
 
     @Override
-    public PageResponse getAllPosts(int pageNumber, int pageSize) {
-        Pageable pageable = generatePageRequestForAllPosts(pageSize, pageNumber);
+    public PageResponse getAllPosts(int pageNumber, int pageSize, String fieldName, String sortDir) {
+        Pageable pageable = generatePageRequestForAllPosts(pageSize, pageNumber, fieldName, sortDir);
         Page<Post> posts = postRepo.findAll(pageable);
         List<PostDto> postDtos = posts.getContent().stream().map((post) -> postToDto(post)).collect(Collectors.toList());
         PageResponse pageResponse = mapPostResponse(posts, postDtos);
@@ -121,8 +122,14 @@ public class PostServiceImpl implements PostService {
         return mapper.map(post, PostDto.class);
     }
 
-    private Pageable generatePageRequestForAllPosts(int pageSize, int pageNumber) {
-        return PageRequest.of(pageNumber, pageSize);
+    private Pageable generatePageRequestForAllPosts(int pageSize, int pageNumber, String fieldName, String sortDir) {
+        Sort sort = null;
+        if (sortDir.equalsIgnoreCase("asc")) {
+            sort = Sort.by(fieldName).ascending();
+        } else {
+            sort = Sort.by(fieldName).descending();
+        }
+        return PageRequest.of(pageNumber, pageSize, sort);
     }
 
     private PageResponse mapPostResponse(Page<Post> posts, List<PostDto> postDtos) {

@@ -12,7 +12,7 @@ public interface PostService {
 
     PostDto getPostById(int postId);
 
-    PageResponse getAllPosts(int pageNumber, int pageSize);
+    PageResponse getAllPosts(int pageNumber, int pageSize, String fieldName, String sortDir);
 
     void deletePost(int postId);
 

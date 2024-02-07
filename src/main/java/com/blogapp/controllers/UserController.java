@@ -36,8 +36,10 @@ public class UserController {
     @GetMapping
     public ResponseEntity<?> getAllUsers(
             @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
-            @RequestParam(value = "pageSize", defaultValue = "2", required = false) int pageSize) {
-        return ResponseEntity.ok(userService.getAllUsers(pageNumber, pageSize));
+            @RequestParam(value = "pageSize", defaultValue = "2", required = false) int pageSize,
+            @RequestParam(value = "sortBy", defaultValue = "id", required = false) String fieldName,
+            @RequestParam(value = "sortDir", defaultValue = "asc", required = false) String sortDir) {
+        return ResponseEntity.ok(userService.getAllUsers(pageNumber, pageSize, fieldName, sortDir));
     }
 
     @GetMapping("/{userId}")
