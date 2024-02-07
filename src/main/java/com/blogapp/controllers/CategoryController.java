@@ -2,14 +2,13 @@ package com.blogapp.controllers;
 
 import com.blogapp.payloads.ApiResponse;
 import com.blogapp.payloads.CategoryDto;
+import com.blogapp.payloads.PageResponse;
 import com.blogapp.services.CategoryService;
 import jakarta.validation.Valid;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.List;
 
 @RestController
 @RequestMapping("/api/categories")
@@ -36,8 +35,10 @@ public class CategoryController {
     }
 
     @GetMapping
-    ResponseEntity<?> getAllCategories() {
-        List<CategoryDto> categories = categoryService.getAllCategories();
+    ResponseEntity<?> getAllCategories(
+            @RequestParam(value = "pageNumber", defaultValue = "0", required = false) int pageNumber,
+            @RequestParam(value = "pageSize", defaultValue = "2", required = false) int pageSize) {
+        PageResponse categories = categoryService.getAllCategories(pageNumber, pageSize);
         return ResponseEntity.ok(categories);
     }
 

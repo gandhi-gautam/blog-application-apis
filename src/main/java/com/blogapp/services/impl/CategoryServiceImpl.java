@@ -3,10 +3,14 @@ package com.blogapp.services.impl;
 import com.blogapp.entities.Category;
 import com.blogapp.exceptions.ResourceNotFoundException;
 import com.blogapp.payloads.CategoryDto;
+import com.blogapp.payloads.PageResponse;
 import com.blogapp.repositories.CategoryRepo;
 import com.blogapp.services.CategoryService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -52,11 +56,13 @@ public class CategoryServiceImpl implements CategoryService {
     }
 
     @Override
-    public List<CategoryDto> getAllCategories() {
-        List<Category> categories = categoryRepo.findAll();
-        List<CategoryDto> categoryDtos = categories.stream().map(category -> categoryToDto(category)).
+    public PageResponse getAllCategories(int pageNumber, int pageSize) {
+        Pageable pageable = createPageableRequest(pageNumber, pageSize);
+        Page<Category> categories = categoryRepo.findAll(pageable);
+        List<CategoryDto> categoryDtos = categories.getContent().stream().map(category -> categoryToDto(category)).
                 collect(Collectors.toList());
-        return categoryDtos;
+        PageResponse pageResponse = mapPageWithData(categories, categoryDtos);
+        return pageResponse;
     }
 
     private Category dtoToCategory(CategoryDto categoryDto) {
@@ -65,5 +71,20 @@ public class CategoryServiceImpl implements CategoryService {
 
     private CategoryDto categoryToDto(Category category) {
         return modelMapper.map(category, CategoryDto.class);
+    }
+
+    private Pageable createPageableRequest(int pageNumber, int pageSize) {
+        return PageRequest.of(pageNumber, pageSize);
+    }
+
+    private PageResponse mapPageWithData(Page<Category> categories, List<CategoryDto> categoryDtos) {
+        PageResponse pageResponse = new PageResponse();
+        pageResponse.setContent(categoryDtos);
+        pageResponse.setTotalPages(categories.getTotalPages());
+        pageResponse.setLastPage(categories.isLast());
+        pageResponse.setPageSize(categories.getSize());
+        pageResponse.setTotalElements(categories.getTotalElements());
+        pageResponse.setPageNumber(categories.getNumber());
+        return pageResponse;
     }
 }

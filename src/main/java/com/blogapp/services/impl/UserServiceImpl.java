@@ -2,11 +2,15 @@ package com.blogapp.services.impl;
 
 import com.blogapp.entities.User;
 import com.blogapp.exceptions.ResourceNotFoundException;
+import com.blogapp.payloads.PageResponse;
 import com.blogapp.payloads.UserDto;
 import com.blogapp.repositories.UserRepo;
 import com.blogapp.services.UserService;
 import org.modelmapper.ModelMapper;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.data.domain.Page;
+import org.springframework.data.domain.PageRequest;
+import org.springframework.data.domain.Pageable;
 import org.springframework.stereotype.Service;
 
 import java.util.List;
@@ -75,10 +79,12 @@ public class UserServiceImpl implements UserService {
      * @return
      */
     @Override
-    public List<UserDto> getAllUsers() {
-        List<User> users = userRepo.findAll();
-        List<UserDto> userDtos = users.stream().map(user -> userToDto(user)).collect(Collectors.toList());
-        return userDtos;
+    public PageResponse getAllUsers(int pageNumber, int pageSize) {
+        Pageable pageable = getUserPageableRequest(pageNumber, pageSize);
+        Page<User> users = userRepo.findAll(pageable);
+        List<UserDto> userDtos = users.getContent().stream().map(user -> userToDto(user)).collect(Collectors.toList());
+        PageResponse response = mapDataToPageResponse(users, userDtos);
+        return response;
     }
 
     /**
@@ -107,5 +113,20 @@ public class UserServiceImpl implements UserService {
     private UserDto userToDto(User user) {
         UserDto userDto = modelMapper.map(user, UserDto.class);
         return userDto;
+    }
+
+    private Pageable getUserPageableRequest(int pageNumber, int pageSize) {
+        return PageRequest.of(pageNumber, pageSize);
+    }
+
+    private PageResponse mapDataToPageResponse(Page<User> users, List<UserDto> userDtos) {
+        PageResponse pageResponse = new PageResponse();
+        pageResponse.setContent(userDtos);
+        pageResponse.setPageNumber(users.getNumber());
+        pageResponse.setPageSize(users.getSize());
+        pageResponse.setLastPage(users.isLast());
+        pageResponse.setTotalPages(users.getTotalPages());
+        pageResponse.setTotalElements(users.getTotalElements());
+        return pageResponse;
     }
 }

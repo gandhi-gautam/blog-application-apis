@@ -1,6 +1,7 @@
 package com.blogapp.services;
 
 import com.blogapp.payloads.CategoryDto;
+import com.blogapp.payloads.PageResponse;
 
 import java.util.List;
 
@@ -13,5 +14,5 @@ public interface CategoryService {
 
     void deleteCategoryById(int categoryId);
 
-    List<CategoryDto> getAllCategories();
+    PageResponse getAllCategories(int pageNumber, int pageSize);
 }
