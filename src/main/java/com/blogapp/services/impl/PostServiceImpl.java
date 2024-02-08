@@ -111,7 +111,9 @@ public class PostServiceImpl implements PostService {
 
     @Override
     public List<PostDto> searchPost(String keyword) {
-        return null;
+        List<Post> posts = postRepo.findByTitleContaining(keyword);
+        List<PostDto> postDtos = posts.stream().map((post) -> postToDto(post)).collect(Collectors.toList());
+        return postDtos;
     }
 
     private Post dtoToPost(PostDto postDto) {
