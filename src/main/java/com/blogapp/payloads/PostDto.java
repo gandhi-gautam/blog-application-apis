@@ -5,9 +5,10 @@ import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import java.util.Date;
+import java.util.Set;
 
 @Getter
-@Setter 
+@Setter
 @NoArgsConstructor
 public class PostDto {
 
@@ -18,4 +19,5 @@ public class PostDto {
     private Date addedDate;
     private UserDto user;
     private CategoryDto category;
+    private Set<CommentDto> comments;
 }

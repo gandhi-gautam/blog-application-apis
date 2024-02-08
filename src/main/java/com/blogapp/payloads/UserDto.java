@@ -1,11 +1,14 @@
 package com.blogapp.payloads;
 
+import com.blogapp.entities.Comment;
 import jakarta.validation.constraints.Email;
 import jakarta.validation.constraints.NotEmpty;
 import jakarta.validation.constraints.Size;
 import lombok.Getter;
 import lombok.NoArgsConstructor;
 import lombok.Setter;
+
+import java.util.List;
 
 @NoArgsConstructor
 @Getter
@@ -26,4 +29,6 @@ public class UserDto {
 
     @NotEmpty
     private String about;
+
+    private List<Comment> comments;
 }
